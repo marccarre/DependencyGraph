@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.IO;
+using System.Collections.Generic;
 
 namespace DependencyGraphTest
 {
@@ -32,6 +33,20 @@ namespace DependencyGraphTest
             Assert.AreEqual("C", edges.inBound.First());
             Assert.AreEqual(1, edges.outBound.Count());
             Assert.AreEqual("A", edges.outBound.First());
+        }
+
+        [Test]
+        public void DependeesFor()
+        {
+            var expectedDependees = new List<string> { "B1", "B2", "C", "D" };
+            Assert.AreEqual(expectedDependees, graph.DependeesFor("A"));
+        }
+
+        [Test]
+        public void DependeesForWithMaxDistance()
+        {
+            var expectedDependees = new List<string> { "B1", "B2", "C" };
+            Assert.AreEqual(expectedDependees, graph.DependeesFor("A", 2));
         }
 
         [Test]
