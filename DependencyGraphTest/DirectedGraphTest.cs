@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using System.IO;
 
 namespace DependencyGraphTest
 {
@@ -14,20 +11,64 @@ namespace DependencyGraphTest
     {
         private DirectedGraph<string> graph = new DirectedGraph<string>();
 
+        [SetUp]
+        public void SetUp()
+        {
+            graph.AddEdge("B1", "A");
+            graph.AddEdge("B2", "A");
+            graph.AddEdge("C", "B1");
+            graph.AddEdge("C", "B2");
+            graph.AddEdge("D", "C");
+        }
+
         [Test]
         public void AddVerticesEdgesAndBrowseGraph()
         {
-            graph.AddEdge("a", "b");
-            graph.AddEdge("a", "B");
-            graph.AddEdge("b", "c");
-            DirectedGraph<string>.Edges edges = graph.EdgesFor("b");
+            DirectedGraph<string>.Edges edges = graph.EdgesFor("B1");
             Assert.IsNotNull(edges);
             Assert.IsNotNull(edges.inBound);
             Assert.IsNotNull(edges.outBound);
             Assert.AreEqual(1, edges.inBound.Count());
-            Assert.AreEqual("a", edges.inBound.First());
+            Assert.AreEqual("C", edges.inBound.First());
             Assert.AreEqual(1, edges.outBound.Count());
-            Assert.AreEqual("c", edges.outBound.First());
+            Assert.AreEqual("A", edges.outBound.First());
+        }
+
+        [Test]
+        public void ExportAsYaml()
+        {
+            using (var stringWriter = new StringWriter())
+            {
+                graph.ExportAsYaml(stringWriter);
+                string actualYaml = stringWriter.ToString();
+                System.Console.Out.WriteLine(actualYaml);
+                Assert.AreEqual(@"B1:
+  isUsedBy:
+  - C
+  dependsOn:
+  - A
+A:
+  isUsedBy:
+  - B1
+  - B2
+  dependsOn: []
+B2:
+  isUsedBy:
+  - C
+  dependsOn:
+  - A
+C:
+  isUsedBy:
+  - D
+  dependsOn:
+  - B1
+  - B2
+D:
+  isUsedBy: []
+  dependsOn:
+  - C
+", actualYaml);
+            }
         }
     }
 }

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using YamlDotNet.Serialization;
 
 namespace DependencyGraph
 {
     public class DirectedGraph<T>
     {
-        private IDictionary<T, Edges> graph = new Dictionary<T, Edges>();
+        private readonly IDictionary<T, Edges> graph = new Dictionary<T, Edges>();
 
         public Edges AddVertex(T vertex)
         {
@@ -34,13 +33,28 @@ namespace DependencyGraph
 
         public class Edges
         {
-            public ISet<T> inBound = new HashSet<T>();
-            public ISet<T> outBound = new HashSet<T>();
+            [YamlMember(Alias = "isUsedBy")]
+            public ISet<T> inBound { get; }
+
+            [YamlMember(Alias = "dependsOn")]
+            public ISet<T> outBound { get; }
+            
+            public Edges()
+            {
+                inBound = new HashSet<T>();
+                outBound = new HashSet<T>();
+            }
         }
 
         public int Count()
         {
             return graph.Count();
+        }
+
+        public void ExportAsYaml(TextWriter outputWriter)
+        {
+            var serializer = new Serializer();
+            serializer.Serialize(outputWriter, graph);
         }
     }
 }
