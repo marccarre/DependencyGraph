@@ -50,13 +50,64 @@ namespace DependencyGraphTest
         }
 
         [Test]
+        public void ExportAsJson()
+        {
+            using (var stringWriter = new StringWriter())
+            {
+                graph.ExportAsJson(stringWriter);
+                string actualJson = stringWriter.ToString();
+                // System.Console.Out.WriteLine(actualJson);
+                Assert.AreEqual(@"{
+  ""B1"": {
+    ""isUsedBy"": [
+      ""C""
+    ],
+    ""dependsOn"": [
+      ""A""
+    ]
+  },
+  ""A"": {
+    ""isUsedBy"": [
+      ""B1"",
+      ""B2""
+    ],
+    ""dependsOn"": []
+  },
+  ""B2"": {
+    ""isUsedBy"": [
+      ""C""
+    ],
+    ""dependsOn"": [
+      ""A""
+    ]
+  },
+  ""C"": {
+    ""isUsedBy"": [
+      ""D""
+    ],
+    ""dependsOn"": [
+      ""B1"",
+      ""B2""
+    ]
+  },
+  ""D"": {
+    ""isUsedBy"": [],
+    ""dependsOn"": [
+      ""C""
+    ]
+  }
+}", actualJson);
+            }
+        }
+
+        [Test]
         public void ExportAsYaml()
         {
             using (var stringWriter = new StringWriter())
             {
                 graph.ExportAsYaml(stringWriter);
                 string actualYaml = stringWriter.ToString();
-                System.Console.Out.WriteLine(actualYaml);
+                // System.Console.Out.WriteLine(actualYaml);
                 Assert.AreEqual(@"B1:
   isUsedBy:
   - C

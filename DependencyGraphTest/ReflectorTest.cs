@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace DependencyGraphTest
+﻿namespace DependencyGraphTest
 {
     using DependencyGraph;
     using NUnit.Framework;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
 
     [TestFixture]
@@ -35,6 +35,38 @@ namespace DependencyGraphTest
             Assert.AreEqual(1, edges.inBound.Count());
             Assert.AreEqual(typeof(SampleCodeBase.ImplementsIFoo), edges.inBound.First());
             Assert.AreEqual(0, edges.outBound.Count());
+        }
+
+        [Test]
+        public void ExportDependencyGraphAsJson()
+        {
+            DirectedGraph<Type> graph = reflector.GetDependencyGraph();
+            using (var stringWriter = new StringWriter())
+            {
+                graph.ExportAsJson(stringWriter);
+                string actualJson = stringWriter.ToString();
+                // System.Console.Out.WriteLine(actualJson);
+                StringAssert.Contains(@"  ""SampleCodeBase.Foo, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"": {
+    ""isUsedBy"": [
+      ""SampleCodeBase.AcceptsFooAsCtorArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.InheritsFoo, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsPrivateMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsPrivateStaticMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsProtectedMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsProtectedStaticMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsPublicStaticMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.AcceptsFooAsPublicMethodArg, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsProtectedStaticVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsPublicStaticVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsPrivateInstanceVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsProtectedInstanceVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsPublicInstanceVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsPrivateStaticVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"",
+      ""SampleCodeBase.UsesFooAsTempVar, SampleCodeBase, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null""
+    ],
+    ""dependsOn"": []
+  },", actualJson);
+            }
         }
 
         [Test]

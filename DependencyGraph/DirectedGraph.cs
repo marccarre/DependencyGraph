@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using YamlDotNet.Serialization;
+using Newtonsoft.Json;
 
 namespace DependencyGraph
 {
@@ -74,9 +75,11 @@ namespace DependencyGraph
         public class Edges
         {
             [YamlMember(Alias = "isUsedBy")]
+            [JsonProperty("isUsedBy")]
             public ISet<T> inBound { get; }
 
             [YamlMember(Alias = "dependsOn")]
+            [JsonProperty("dependsOn")]
             public ISet<T> outBound { get; }
             
             public Edges()
@@ -89,6 +92,16 @@ namespace DependencyGraph
         public int Count()
         {
             return graph.Count();
+        }
+
+        public void ExportAsJson(TextWriter outputWriter, Formatting formatting = Formatting.Indented)
+        {
+            var serializer = new JsonSerializer();
+            serializer.Formatting = formatting;
+            using (var jsonWriter = new JsonTextWriter(outputWriter))
+            {
+                serializer.Serialize(jsonWriter, graph);
+            }
         }
 
         public void ExportAsYaml(TextWriter outputWriter)
