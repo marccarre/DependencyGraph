@@ -24,3 +24,7 @@ C# Dependency Graph based on Reflection
 
 The tool will print the dependency graph of the provided assembly to the standard output.
 Feel free to redirect the output to a file at your convenience.
+
+## Contributors
+
+Special thanks to [TheDudeFromCI](https://github.com/TheDudeFromCI).
