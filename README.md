@@ -1,7 +1,9 @@
 # DependencyGraph
+
 C# Dependency Graph based on Reflection
 
-**Features**:
+## Features
+
 - List classes and dependencies in the provided assembly.
 - Can find dependencies for:
   - inheritance (via both `class`es and `interface`s)
@@ -13,7 +15,8 @@ C# Dependency Graph based on Reflection
   - temporary variables
 - Fully unit tested and test-driven.
 
-**Installation & Usage**:
+## Installation & Usage
+
 - Go to the release page and download [`DependencyGraphCLI.zip`](https://github.com/marccarre/DependencyGraph/releases/download/snapshot/DependencyGraphCLI.zip).
 - Extract `DependencyGraphCLI.zip`.
 - Open command prompt (`cmd`) and `cd` to the extracted directory.
